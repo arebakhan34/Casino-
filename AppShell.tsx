@@ -1,0 +1,61 @@
+"use client";
+import { useState } from 'react';
+import Header from './Header';
+import Sidebar from './Sidebar';
+import Footer from './Footer';
+import AuthModal from './AuthModal';
+import WalletModal from './WalletModal';
+import VaultModal from './VaultModal';
+import NotificationsSidebar from './NotificationsSidebar';
+import RedeemCodeModal from './RedeemCodeModal';
+
+export default function AppShell({ children }: { children: React.ReactNode }) {
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isCollapsed, setIsCollapsed] = useState(false);
+  const [authOpen, setAuthOpen] = useState(false);
+  const [authTab, setAuthTab] = useState<'login' | 'register'>('login');
+  const [walletOpen, setWalletOpen] = useState(false);
+  const [vaultOpen, setVaultOpen] = useState(false);
+  const [notificationsOpen, setNotificationsOpen] = useState(false);
+  const [redeemOpen, setRedeemOpen] = useState(false);
+
+  const openLogin = () => {
+    setAuthTab('login');
+    setAuthOpen(true);
+  };
+  const openRegister = () => {
+    setAuthTab('register');
+    setAuthOpen(true);
+  };
+
+  return (
+    <div className="min-h-screen bg-[#0a0a0f] text-white selection:bg-[#7717ff] selection:text-white">
+      <Header
+        onMenuToggle={() => setIsMenuOpen(!isMenuOpen)}
+        onCollapseToggle={() => setIsCollapsed(!isCollapsed)}
+        isMenuOpen={isMenuOpen}
+        isCollapsed={isCollapsed}
+        onLoginClick={openLogin}
+        onRegisterClick={openRegister}
+        onWalletClick={() => setWalletOpen(true)}
+        onVaultClick={() => setVaultOpen(true)}
+        onNotificationsClick={() => setNotificationsOpen(true)}
+        onRedeemClick={() => setRedeemOpen(true)}
+      />
+      <div className="flex max-w-[1920px] mx-auto">
+        <Sidebar isOpen={isMenuOpen} onClose={() => setIsMenuOpen(false)} collapsed={isCollapsed} />
+        <main className="flex-1 min-w-0 overflow-hidden">
+          <div className="px-3 lg:px-6 py-4 lg:py-6 max-w-[1440px] mx-auto w-full">
+            {children}
+          </div>
+          <Footer />
+        </main>
+      </div>
+      <AuthModal isOpen={authOpen} onClose={() => setAuthOpen(false)} initialTab={authTab} />
+      <WalletModal isOpen={walletOpen} onClose={() => setWalletOpen(false)} />
+      <VaultModal isOpen={vaultOpen} onClose={() => setVaultOpen(false)} />
+      <NotificationsSidebar isOpen={notificationsOpen} onClose={() => setNotificationsOpen(false)} />
+      <RedeemCodeModal isOpen={redeemOpen} onClose={() => setRedeemOpen(false)} />
+    </div>
+  );
+}
